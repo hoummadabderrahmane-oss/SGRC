@@ -53,3 +53,41 @@ CREATE TABLE activity_logs (
 
 
 )
+ALTER TABLE citizens
+ADD COLUMN gender ENUM('Male','Female') NULL,
+ADD COLUMN nationality VARCHAR(100),
+ADD COLUMN neighborhood VARCHAR(150),
+ADD COLUMN register_book VARCHAR(50),
+ADD COLUMN page_number INT,
+ADD COLUMN marital_status VARCHAR(50),
+ADD COLUMN created_by INT,
+ADD COLUMN updated_by INT;
+
+                            
+)
+CREATE TABLE register_books (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+            book_number VARCHAR(50) NOT NULL,
+                title VARCHAR(255),
+                    year YEAR NOT NULL,
+                        neighborhood VARCHAR(150),
+                            total_pages INT DEFAULT 0,
+                                description TEXT,
+                                    status ENUM('Active','Archived') DEFAULT 'Active',
+                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                        );
+
+)
+CREATE TABLE register_pages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+            book_id INT NOT NULL,
+                page_number INT NOT NULL,
+                    image VARCHAR(255),
+                        ocr_text LONGTEXT,
+                            verified TINYINT(1) DEFAULT 0,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    FOREIGN KEY (book_id) REFERENCES register_books(id)
+                                            ON DELETE CASCADE
+                                            );
+
+)
