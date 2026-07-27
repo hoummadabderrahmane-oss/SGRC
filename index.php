@@ -1,19 +1,11 @@
 <?php
-/**
- * SGRC - Main Entry Point
- * نقطة الدخول الرئيسية
- */
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/includes/session.php';
 
-// Define base path
-define('BASE_PATH', __DIR__);
-
-// Load core
-require_once BASE_PATH . '/app/Core/App.php';
-
-// Redirect to dashboard if logged in, else to login
-if (authCheck()) {
-    header('Location: /modules/dashboard/index.php');
-} else {
+if (!isLoggedIn()) {
     header('Location: /modules/auth/login.php');
-}
-exit;
+        exit;
+        }
+
+        header('Location: /modules/dashboard/index.php');
+        
