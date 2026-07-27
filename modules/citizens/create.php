@@ -1,50 +1,147 @@
 <?php
-$pageTitle = trans('citizens'); $activeModule = 'citizens';
+$pageTitle = 'Create Citizen - SGRC';
 require_once __DIR__ . '/../../includes/header.php';
-if (!can('citizens.view')) { app()->redirect('/modules/dashboard/index.php', 'error', trans('access_denied')); }
-$db = app()->db();
-$search = $_GET['search'] ?? ''; $neighborhood = $_GET['neighborhood'] ?? ''; $gender = $_GET['gender'] ?? '';
-$where = []; $params = [];
-if ($search) { $where[] = "(family_name LIKE :s OR first_name LIKE :s OR father_name LIKE :s OR national_id LIKE :s)"; $params[':s'] = "%$search%"; }
-if ($neighborhood) { $where[] = "neighborhood = :n"; $params[':n'] = $neighborhood; }
-if ($gender) { $where[] = "gender = :g"; $params[':g'] = $gender; }
-$wc = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-$stmt = $db->prepare("SELECT * FROM citizens $wc ORDER BY created_at DESC"); $stmt->execute($params);
-$citizens = $stmt->fetchAll();
-$neighborhoods = $db->query("SELECT DISTINCT neighborhood FROM citizens WHERE neighborhood IS NOT NULL AND neighborhood != '' ORDER BY neighborhood")->fetchAll(PDO::FETCH_COLUMN);
+require_once __DIR__ . '/../../includes/auth.php';
+requireAuth();
+
+$db = Database::getInstance();
+$error = '';
+$message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $national_id = $_POST['national_id'] ?? '';
+    $first_name = $_POST['first_name'] ?? '';
+    $last_name = $_POST['last_name'] ?? '';
+    $first_name_ar = $_POST['first_name_ar'] ?? '';
+    $last_name_ar = $_POST['last_name_ar'] ?? '';
+    $date_of_birth = $_POST['date_of_birth'] ?? '';
+    $place_of_birth = $_POST['place_of_birth'] ?? '';
+    $gender = $_POST['gender'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $blood_type = $_POST['blood_type'] ?? '';
+    $father_name = $_POST['father_name'] ?? '';
+    $mother_name = $_POST['mother_name'] ?? '';
+    $marital_status = $_POST['marital_status'] ?? 'single';
+    
+    $exists = $db->query("SELECT id FROM citizens WHERE national_id = ?", [$national_id])->fetch();
+    if ($exists) {
+        $error = 'National ID already exists';
+    } else {
+        $photo_path = null;
+        if (!empty($_FILES['photo']['name'])) {
+            $uploadDir = __DIR__ . '/../../uploads/photos/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            $photo_path = 'uploads/photos/' . time() . '_' . basename($_FILES['photo']['name']);
+            move_uploaded_file($_FILES['photo']['tmp_name'], __DIR__ . '/../../' . $photo_path);
+        }
+        
+        $db->query("INSERT INTO citizens (national_id, first_name, last_name, first_name_ar, last_name_ar, date_of_birth, place_of_birth, gender, address, phone, email, blood_type, father_name, mother_name, marital_status, photo_path, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [$national_id, $first_name, $last_name, $first_name_ar, $last_name_ar, $date_of_birth, $place_of_birth, $gender, $address, $phone, $email, $blood_type, $father_name, $mother_name, $marital_status, $photo_path, $_SESSION['user_id']]);
+        
+        $message = 'Citizen created successfully';
+        header('Location: index.php');
+        exit;
+    }
+}
 ?>
-<div class="page-header d-flex justify-content-between align-items-center flex-wrap">
-    <div><h2><i class="bi bi-people-fill text-primary"></i> <?php echo trans('citizens'); ?></h2><p class="text-muted"><?php echo trans('total_citizens'); ?>: <?php echo count($citizens); ?></p></div>
-    <?php if (can('citizens.create')): ?><a href="create.php" class="btn btn-primary-custom"><i class="bi bi-person-plus"></i> <?php echo trans('add_citizen'); ?></a><?php endif; ?>
-</div>
-<div class="chart-card mb-4">
-    <form method="GET" action="" class="row g-3">
-        <div class="col-md-4"><div class="input-group"><span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span><input type="text" class="form-control form-control-custom" name="search" placeholder="<?php echo trans('search_citizen'); ?>" value="<?php echo htmlspecialchars($search); ?>"></div></div>
-        <div class="col-md-3"><select class="form-select form-control-custom" name="neighborhood"><option value=""><?php echo trans('neighborhood'); ?> - <?php echo trans('all'); ?></option><?php foreach ($neighborhoods as $n): ?><option value="<?php echo $n; ?>" <?php echo $neighborhood === $n ? 'selected' : ''; ?>><?php echo $n; ?></option><?php endforeach; ?></select></div>
-        <div class="col-md-3"><select class="form-select form-control-custom" name="gender"><option value=""><?php echo trans('gender'); ?> - <?php echo trans('all'); ?></option><option value="male" <?php echo $gender === 'male' ? 'selected' : ''; ?>><?php echo trans('male'); ?></option><option value="female" <?php echo $gender === 'female' ? 'selected' : ''; ?>><?php echo trans('female'); ?></option></select></div>
-        <div class="col-md-2"><button type="submit" class="btn btn-primary-custom w-100"><i class="bi bi-funnel"></i> <?php echo trans('filter'); ?></button></div>
+
+<div class="container-fluid">
+    <h2><?php echo $lang['create'] ?? 'Create'; ?> <?php echo $lang['citizens'] ?? 'Citizen'; ?></h2>
+    
+    <?php if ($error): ?>
+        <div class="alert alert-danger"><?php echo $error; ?></div>
+    <?php endif; ?>
+    
+    <form method="POST" enctype="multipart/form-data" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">National ID *</label>
+            <input type="text" name="national_id" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Photo</label>
+            <input type="file" name="photo" class="form-control" accept="image/*">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">First Name *</label>
+            <input type="text" name="first_name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Last Name *</label>
+            <input type="text" name="last_name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">First Name (Arabic)</label>
+            <input type="text" name="first_name_ar" class="form-control" dir="rtl">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Last Name (Arabic)</label>
+            <input type="text" name="last_name_ar" class="form-control" dir="rtl">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date of Birth *</label>
+            <input type="date" name="date_of_birth" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Place of Birth</label>
+            <input type="text" name="place_of_birth" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Gender *</label>
+            <select name="gender" class="form-select" required>
+                <option value="male"><?php echo $lang['male'] ?? 'Male'; ?></option>
+                <option value="female"><?php echo $lang['female'] ?? 'Female'; ?></option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="tel" name="phone" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Blood Type</label>
+            <select name="blood_type" class="form-select">
+                <option value="">--</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Marital Status</label>
+            <select name="marital_status" class="form-select">
+                <option value="single"><?php echo $lang['single'] ?? 'Single'; ?></option>
+                <option value="married"><?php echo $lang['married'] ?? 'Married'; ?></option>
+                <option value="divorced"><?php echo $lang['divorced'] ?? 'Divorced'; ?></option>
+                <option value="widowed"><?php echo $lang['widowed'] ?? 'Widowed'; ?></option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Father's Name</label>
+            <input type="text" name="father_name" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Mother's Name</label>
+            <input type="text" name="mother_name" class="form-control">
+        </div>
+        <div class="col-12">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control" rows="2"></textarea>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary"><?php echo $lang['save'] ?? 'Save'; ?></button>
+            <a href="index.php" class="btn btn-secondary"><?php echo $lang['cancel'] ?? 'Cancel'; ?></a>
+        </div>
     </form>
 </div>
-<div class="table-card">
-    <div class="table-responsive">
-        <table class="table table-hover" id="citizensTable">
-            <thead><tr><th>#</th><th><?php echo trans('photo'); ?></th><th><?php echo trans('national_id'); ?></th><th><?php echo trans('full_name'); ?></th><th><?php echo trans('birth_date'); ?></th><th><?php echo trans('address'); ?></th><th><?php echo trans('phone'); ?></th><th><?php echo trans('actions'); ?></th></tr></thead>
-            <tbody>
-                <?php foreach ($citizens as $i => $c): ?>
-                <tr>
-                    <td><?php echo $i + 1; ?></td>
-                    <td><?php if ($c['photo_path']): ?><img src="/<?php echo $c['photo_path']; ?>" class="rounded-circle" width="40" height="40" style="object-fit:cover;"><?php else: ?><div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white" style="width:40px;height:40px;"><?php echo mb_substr($c['first_name'], 0, 1); ?></div><?php endif; ?></td>
-                    <td><code><?php echo $c['national_id'] ?? '-'; ?></code></td>
-                    <td><strong><?php echo $c['family_name'] . ' ' . $c['first_name']; ?></strong><br><small class="text-muted"><?php echo $c['father_name'] ?? ''; ?></small></td>
-                    <td><?php echo formatDate($c['birth_date']); ?></td>
-                    <td><?php echo $c['address'] ?? '-'; ?></td>
-                    <td><?php echo $c['phone'] ?? '-'; ?></td>
-                    <td><div class="btn-group"><a href="view.php?id=<?php echo $c['id']; ?>" class="btn btn-sm btn-info" title="<?php echo trans('view'); ?>"><i class="bi bi-eye"></i></a><?php if (can('citizens.edit')): ?><a href="edit.php?id=<?php echo $c['id']; ?>" class="btn btn-sm btn-warning" title="<?php echo trans('edit'); ?>"><i class="bi bi-pencil"></i></a><?php endif; ?><?php if (can('citizens.delete')): ?><a href="delete.php?id=<?php echo $c['id']; ?>" class="btn btn-sm btn-danger" title="<?php echo trans('delete'); ?>" onclick="return confirmDelete('<?php echo trans('delete_citizen'); ?>?')"><i class="bi bi-trash"></i></a><?php endif; ?></div></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-<script>document.addEventListener('DOMContentLoaded', () => { initDataTable('#citizensTable', { pageLength: 25, order: [[0, 'asc']], columnDefs: [{ orderable: false, targets: [1, 7] }] }); });</script>
+
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?>
