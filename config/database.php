@@ -1,49 +1,40 @@
 <?php
-/**
- * SGRC - Database Configuration
- * Système de Gestion des Registres de la Commune
- */
-
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', dirname(__DIR__));
-}
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'sgrc_db');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_CHARSET', 'utf8mb4');
 
 class Database {
-    private static ?PDO $instance = null;
-
-    private const DB_HOST = 'localhost';
-    private const DB_NAME = 'sgrc_db';
-    private const DB_USER = 'root';
-    private const DB_PASS = '';
-    private const DB_CHARSET = 'utf8mb4';
-
-    public static function getInstance(): PDO {
-        if (self::$instance === null) {
-            try {
-                $dsn = "mysql:host=" . self::DB_HOST . ";dbname=" . self::DB_NAME . ";charset=" . self::DB_CHARSET;
-                $options = [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . self::DB_CHARSET . " COLLATE utf8mb4_unicode_ci"
-                ];
-                self::$instance = new PDO($dsn, self::DB_USER, self::DB_PASS, $options);
-            } catch (PDOException $e) {
-                error_log("Database Connection Error: " . $e->getMessage());
-                die("خطأ في الاتصال بقاعدة البيانات | Erreur de connexion à la base de données");
-            }
-        }
-        return self::$instance;
-    }
-
-    // Prevent cloning and unserialization
-    private function __clone() {}
-    public function __wakeup() {
-        throw new Exception("Cannot unserialize singleton");
-    }
-}
-
-// Helper function for quick access
-function db(): PDO {
-    return Database::getInstance();
-}
+    private static $instance = null;
+        private $pdo;
+            
+                private function __construct() {
+                        try {
+                                    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+                                                $this->pdo = new PDO($dsn, DB_USER, DB_PASS);
+                                                            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                                                        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                                                                                } catch (PDOException $e) {
+                                                                                            die("Connection failed: " . $e->getMessage());
+                                                                                                    }
+                                                                                                        }
+                                                                                                            
+                                                                                                                public static function getInstance() {
+                                                                                                                        if (self::$instance === null) {
+                                                                                                                                    self::$instance = new self();
+                                                                                                                                            }
+                                                                                                                                                    return self::$instance;
+                                                                                                                                                        }
+                                                                                                                                                            
+                                                                                                                                                                public function getConnection() {
+                                                                                                                                                                        return $this->pdo;
+                                                                                                                                                                            }
+                                                                                                                                                                                
+                                                                                                                                                                                    public function query($sql, $params = []) {
+                                                                                                                                                                                            $stmt = $this->pdo->prepare($sql);
+                                                                                                                                                                                                    $stmt->execute($params);
+                                                                                                                                                                                                            return $stmt;
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                                
