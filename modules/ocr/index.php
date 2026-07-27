@@ -14,7 +14,7 @@ requireAuth();
                 <div class="card-body">
                     <h5>Scan Document</h5>
                     <p>Upload and extract text from scanned documents</p>
-                    <a href="/modules/registers/ocr.php" class="btn btn-primary">Process Scan</a>
+                    <a href="/SGRC/modules/registers/ocr.php" class="btn btn-primary">Process Scan</a>
                 </div>
             </div>
         </div>
@@ -23,7 +23,7 @@ requireAuth();
                 <div class="card-body">
                     <h5>Upload Scan</h5>
                     <p>Upload scanned documents to registers</p>
-                    <a href="/modules/registers/upload_scan.php" class="btn btn-primary">Upload Scan</a>
+                    <a href="/SGRC/modules/registers/upload_scan.php" class="btn btn-primary">Upload Scan</a>
                 </div>
             </div>
         </div>
