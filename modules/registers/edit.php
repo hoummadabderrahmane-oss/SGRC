@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="form-label">Document</label>
             <input type="file" name="document" class="form-control">
             <?php if ($register['document_path']): ?>
-                <small class="d-block mt-1"><a href="/<?php echo $register['document_path']; ?>" target="_blank">View current document</a></small>
+                <small class="d-block mt-1"><a href="/SGRC/<?php echo $register['document_path']; ?>" target="_blank">View current document</a></small>
             <?php endif; ?>
         </div>
         <div class="col-12">

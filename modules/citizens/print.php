@@ -44,7 +44,7 @@ if (!$citizen) {
         
         <?php if ($citizen['photo_path']): ?>
         <div class="photo">
-            <img src="/<?php echo $citizen['photo_path']; ?>" alt="Photo">
+            <img src="/SGRC/<?php echo $citizen['photo_path']; ?>" alt="Photo">
         </div>
         <?php endif; ?>
         

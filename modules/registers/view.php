@@ -44,19 +44,19 @@ if (!$register) {
                 <tr><td><strong>Date of Birth:</strong></td><td><?php echo $register['date_of_birth']; ?></td></tr>
                 <tr><td><strong>Gender:</strong></td><td><?php echo ucfirst($register['gender']); ?></td></tr>
             </table>
-            <a href="/modules/citizens/view.php?id=<?php echo $register['citizen_id']; ?>" class="btn btn-sm btn-info">View Full Citizen Profile</a>
+            <a href="/SGRC/modules/citizens/view.php?id=<?php echo $register['citizen_id']; ?>" class="btn btn-sm btn-info">View Full Citizen Profile</a>
             <?php endif; ?>
             
             <?php if ($register['document_path']): ?>
             <hr>
             <h5>Attached Document</h5>
-            <a href="/<?php echo $register['document_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Document</a>
+            <a href="/SGRC/<?php echo $register['document_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Document</a>
             <?php endif; ?>
             
             <?php if ($register['scan_path']): ?>
             <hr>
             <h5>Scanned Document</h5>
-            <a href="/<?php echo $register['scan_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Scan</a>
+            <a href="/SGRC/<?php echo $register['scan_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary">View Scan</a>
             <?php endif; ?>
         </div>
     </div>

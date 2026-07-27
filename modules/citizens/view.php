@@ -31,7 +31,7 @@ $registers = $db->query("SELECT * FROM registers WHERE citizen_id = ? ORDER BY c
             <div class="card">
                 <div class="card-body text-center">
                     <?php if ($citizen['photo_path']): ?>
-                        <img src="/<?php echo $citizen['photo_path']; ?>" class="img-fluid rounded mb-3" style="max-height: 200px;">
+                        <img src="/SGRC/<?php echo $citizen['photo_path']; ?>" class="img-fluid rounded mb-3" style="max-height: 200px;">
                     <?php else: ?>
                         <div class="bg-light rounded mb-3" style="height: 200px; display: flex; align-items: center; justify-content: center;">
                             <span class="text-muted">No Photo</span>

@@ -35,9 +35,21 @@ $params[] = $offset;
 
 $registers = $db->query($sql, $params)->fetchAll();
 
-$countSql = str_replace("r.*, c.first_name, c.last_name", "COUNT(*) as total", $sql);
-$countSql = preg_replace("/ORDER BY.*$/", "", $countSql);
-$total = $db->query($countSql, array_slice($params, 0, -2))->fetch()['total'];
+$countSql = "SELECT COUNT(*) as total FROM registers r LEFT JOIN citizens c ON r.citizen_id = c.id WHERE 1=1";
+$countParams = [];
+if ($type) {
+    $countSql .= " AND r.register_type = ?";
+    $countParams[] = $type;
+}
+if ($status) {
+    $countSql .= " AND r.status = ?";
+    $countParams[] = $status;
+}
+if ($search) {
+    $countSql .= " AND (r.register_number LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ?)";
+    array_push($countParams, "%$search%", "%$search%", "%$search%");
+}
+$total = $db->query($countSql, $countParams)->fetch()['total'];
 $totalPages = ceil($total / $perPage);
 ?>
 

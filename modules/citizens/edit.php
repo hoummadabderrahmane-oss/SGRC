@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label class="form-label">Photo</label>
             <input type="file" name="photo" class="form-control" accept="image/*">
             <?php if ($citizen['photo_path']): ?>
-                <small>Current: <img src="/<?php echo $citizen['photo_path']; ?>" height="50" class="mt-1"></small>
+                <small>Current: <img src="/SGRC/<?php echo $citizen['photo_path']; ?>" height="50" class="mt-1"></small>
             <?php endif; ?>
         </div>
         <div class="col-md-6">
