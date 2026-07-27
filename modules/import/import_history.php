@@ -1,0 +1,66 @@
+<?php
+$pageTitle = 'Import History - SGRC';
+require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/auth.php';
+requireAuth();
+
+$db = Database::getInstance();
+$page = max(1, intval($_GET['page'] ?? 1));
+$perPage = 20;
+$offset = ($page - 1) * $perPage;
+
+$history = $db->query("SELECT h.*, u.username FROM import_history h LEFT JOIN users u ON h.imported_by = u.id ORDER BY h.imported_at DESC LIMIT ? OFFSET ?", [$perPage, $offset])->fetchAll();
+$total = $db->query("SELECT COUNT(*) as c FROM import_history")->fetch()['c'];
+$totalPages = ceil($total / $perPage);
+?>
+
+<div class="container-fluid">
+    <h2>Import History</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>File</th>
+                        <th>Processed</th>
+                        <th>Success</th>
+                        <th>Failed</th>
+                        <th>User</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($history as $h): ?>
+                    <tr>
+                        <td><?php echo $h['id']; ?></td>
+                        <td><?php echo strtoupper($h['import_type']); ?></td>
+                        <td><?php echo htmlspecialchars($h['file_name'] ?? '-'); ?></td>
+                        <td><?php echo $h['records_processed']; ?></td>
+                        <td class="text-success"><?php echo $h['records_success']; ?></td>
+                        <td class="text-danger"><?php echo $h['records_failed']; ?></td>
+                        <td><?php echo htmlspecialchars($h['username'] ?? '-'); ?></td>
+                        <td><?php echo $h['imported_at']; ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <?php if ($totalPages > 1): ?>
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+</div>
+
+<?php require_once __DIR__ . '/../../includes/footer.php'; ?>
