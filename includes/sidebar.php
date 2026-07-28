@@ -3,55 +3,59 @@ $currentModule = basename(dirname($_SERVER['PHP_SELF']));
 ?>
 <nav class="sidebar">
     <div class="sidebar-header">
-        <h3>SGRC</h3>
-    </div>
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'dashboard' ? 'active' : ''; ?>" href="/SGRC/modules/dashboard/index.php">
-                <?php echo $lang['dashboard'] ?? 'Dashboard'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'citizens' ? 'active' : ''; ?>" href="/SGRC/modules/citizens/index.php">
-                <?php echo $lang['citizens'] ?? 'Citizens'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'registers' ? 'active' : ''; ?>" href="/SGRC/modules/registers/index.php">
-                <?php echo $lang['registers'] ?? 'Registers'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'certificates' ? 'active' : ''; ?>" href="/SGRC/modules/certificates/index.php">
-                <?php echo $lang['certificates'] ?? 'Certificates'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'documents' ? 'active' : ''; ?>" href="/SGRC/modules/documents/index.php">
-                <?php echo $lang['documents'] ?? 'Documents'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'reports' ? 'active' : ''; ?>" href="/SGRC/modules/reports/index.php">
-                <?php echo $lang['reports'] ?? 'Reports'; ?>
-            </a>
-        </li>
-        <?php if (isAdmin()): ?>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'users' ? 'active' : ''; ?>" href="/SGRC/modules/users/index.php">
-                <?php echo $lang['users'] ?? 'Users'; ?>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <?php echo $currentModule === 'settings' ? 'active' : ''; ?>" href="/SGRC/modules/settings/index.php">
-                <?php echo $lang['settings'] ?? 'Settings'; ?>
-            </a>
-        </li>
-        <?php endif; ?>
-        <li class="nav-item mt-4">
-            <a class="nav-link text-danger" href="/SGRC/modules/auth/logout.php">
-                <?php echo $lang['logout'] ?? 'Logout'; ?>
-            </a>
-        </li>
-    </ul>
-</nav>
+            <h3>SGRC</h3>
+                </div>
+                    <ul class="nav flex-column">
+                            <li class="nav-item">
+                                        <a class="nav-link <?php echo $currentModule === 'dashboard' ? 'active' : ''; ?>" href="/SGRC/modules/dashboard/index.php">
+                                                        <?php echo $lang['dashboard'] ?? 'Dashboard'; ?>
+                                                                    </a>
+                                                                            </li>
+                                                                                    <li class="nav-item">
+                                                                                                <a class="nav-link <?php echo $currentModule === 'citizens' ? 'active' : ''; ?>" href="/SGRC/modules/citizens/index.php">
+                                                                                                                <?php echo $lang['citizens'] ?? 'Citizens'; ?>
+                                                                                                                            </a>
+                                                                                                                                    </li>
+                                                                                                                                            <li class="nav-item">
+                                                                                                                                                        <a class="nav-link <?php echo $currentModule === 'registers' ? 'active' : ''; ?>" href="/SGRC/modules/registers/index.php">
+                                                                                                                                                                        <?php echo $lang['registers'] ?? 'Registers'; ?>
+                                                                                                                                                                                    </a>
+                                                                                                                                                                                            </li>
+                                                                                                                                                                                                    <li class="nav-item">
+                                                                                                                                                                                                                <a class="nav-link <?php echo $currentModule === 'certificates' ? 'active' : ''; ?>" href="/SGRC/modules/certificates/index.php">
+                                                                                                                                                                                                                                <?php echo $lang['certificates'] ?? 'Certificates'; ?>
+                                                                                                                                                                                                                                            </a>
+                                                                                                                                                                                                                                                    </li>
+                                                                                                                                                                                                                                                            <li class="nav-item">
+                                                                                                                                                                                                                                                                        <a class="nav-link <?php echo $currentModule === 'documents' ? 'active' : ''; ?>" href="/SGRC/modules/documents/index.php">
+                                                                                                                                                                                                                                                                                        <?php echo $lang['documents'] ?? 'Documents'; ?>
+                                                                                                                                                                                                                                                                                                    </a>
+                                                                                                                                                                                                                                                                                                            </li>
+                                                                                                                                                                                                                                                                                                                    <li class="nav-item">
+                                                                                                                                                                                                                                                                                                                                <a class="nav-link <?php echo $currentModule === 'reports' ? 'active' : ''; ?>" href="/SGRC/modules/reports/index.php">
+                                                                                                                                                                                                                                                                                                                                                <?php echo $lang['reports'] ?? 'Reports'; ?>
+                                                                                                                                                                                                                                                                                                                                                            </a>
+                                                                                                                                                                                                                                                                                                                                                                    </li>
+                                                                                                                                                                                                                                                                                                                                                                            <?php 
+                                                                                                                                                                                                                                                                                                                                                                                    // Inline admin check
+                                                                                                                                                                                                                                                                                                                                                                                            if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): 
+                                                                                                                                                                                                                                                                                                                                                                                                    ?>
+                                                                                                                                                                                                                                                                                                                                                                                                            <li class="nav-item">
+                                                                                                                                                                                                                                                                                                                                                                                                                        <a class="nav-link <?php echo $currentModule === 'users' ? 'active' : ''; ?>" href="/SGRC/modules/users/index.php">
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <?php echo $lang['users'] ?? 'Users'; ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            </li>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <li class="nav-item">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <a class="nav-link <?php echo $currentModule === 'settings' ? 'active' : ''; ?>" href="/SGRC/modules/settings/index.php">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <?php echo $lang['settings'] ?? 'Settings'; ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </li>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <?php endif; ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <li class="nav-item mt-4">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <a class="nav-link text-danger" href="/SGRC/modules/auth/logout.php">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <?php echo $lang['logout'] ?? 'Logout'; ?>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </li>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </ul>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </nav>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
