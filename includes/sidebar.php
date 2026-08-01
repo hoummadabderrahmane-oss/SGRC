@@ -8,6 +8,7 @@ $menuItems = [
                 ['certificates', 'Certificates', 'fa-certificate'],
                     ['documents', 'Documents', 'fa-folder-open'],
                         ['reports', 'Reports', 'fa-chart-pie'],
+                            ['import', 'Import', 'fa-file-import'],
                         ];
 
                         $adminItems = [
