@@ -8,8 +8,17 @@ $db = Database::getInstance();
 $message = '';
 $error = '';
 
+// Check if import_history table exists
+$tableExists = false;
+try {
+    $db->query("SELECT 1 FROM import_history LIMIT 1");
+    $tableExists = true;
+} catch (PDOException $e) {
+    $tableExists = false;
+}
+
 // Handle file upload
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file']) && $tableExists) {
     $file = $_FILES['import_file'];
     $module = $_POST['module'] ?? 'citizens';
 
@@ -26,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
             $filepath = $uploadDir . $filename;
 
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // Log import
                 $db->query(
                     "INSERT INTO import_history (filename, module, file_type, uploaded_by, status) VALUES (?, ?, ?, ?, ?)",
                     [$filename, $module, $ext, $_SESSION['user_id'], 'pending']
@@ -43,10 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
     }
 }
 
-// Get import history
-$history = $db->query(
-    "SELECT h.*, u.username FROM import_history h LEFT JOIN users u ON h.uploaded_by = u.id ORDER BY h.created_at DESC LIMIT 20"
-)->fetchAll();
+// Get import history (only if table exists)
+$history = [];
+if ($tableExists) {
+    try {
+        $history = $db->query(
+            "SELECT h.*, u.username FROM import_history h LEFT JOIN users u ON h.uploaded_by = u.id ORDER BY h.created_at DESC LIMIT 20"
+        )->fetchAll();
+    } catch (PDOException $e) {
+        $history = [];
+    }
+}
 
 // Import modules available
 $importModules = [
@@ -68,6 +83,34 @@ $importModules = [
             <i class="fas fa-history me-2"></i>View Full History
         </a>
     </div>
+
+    <?php if (!$tableExists): ?>
+    <!-- Setup Alert -->
+    <div class="alert alert-warning d-flex align-items-start mb-4">
+        <i class="fas fa-exclamation-triangle me-3 mt-1"></i>
+        <div>
+            <strong>Database table missing!</strong>
+            <p class="mb-2">The <code>import_history</code> table does not exist. Please run the following SQL in phpMyAdmin:</p>
+            <pre style="background:#1a1a2e;color:#fff;padding:16px;border-radius:8px;font-size:13px;overflow-x:auto;">
+CREATE TABLE IF NOT EXISTS import_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    module VARCHAR(50) NOT NULL,
+    file_type VARCHAR(10) NOT NULL,
+    file_path VARCHAR(500),
+    total_records INT DEFAULT 0,
+    records_processed INT DEFAULT 0,
+    records_failed INT DEFAULT 0,
+    status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+    error_log TEXT,
+    uploaded_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL,
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;</pre>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <?php if ($message): ?>
     <div class="alert alert-success d-flex align-items-center mb-4">
@@ -120,7 +163,7 @@ $importModules = [
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Upload File</label>
                             <div class="upload-zone" id="uploadZone">
-                                <input type="file" name="import_file" id="importFile" accept=".csv,.xlsx,.xls" required class="d-none">
+                                <input type="file" name="import_file" id="importFile" accept=".csv,.xlsx,.xls" required class="d-none" <?php echo !$tableExists ? 'disabled' : ''; ?>>
                                 <div class="upload-zone-content">
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
@@ -151,7 +194,7 @@ $importModules = [
                         </div>
 
                         <!-- Submit -->
-                        <button type="submit" class="btn btn-primary w-100" id="submitBtn" disabled>
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn" disabled <?php echo !$tableExists ? 'disabled' : ''; ?>>
                             <i class="fas fa-upload me-2"></i>Import Data
                         </button>
                     </form>
