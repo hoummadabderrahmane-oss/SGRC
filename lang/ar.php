@@ -121,4 +121,8 @@ $lang = [
     'completed' => 'مكتمل',
     'failed' => 'فاشل',
     'processing' => 'قيد المعالجة',
+        'file_number' => 'رقم الملف',
+    'file_date' => 'تاريخ الملف',
+    'file_number_example' => 'مثال: 1233',
+    'file_date_example' => 'مثال: 2006/434',
 ];

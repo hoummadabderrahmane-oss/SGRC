@@ -124,4 +124,8 @@ $lang = [
     'expired' => 'Expiré',
     'revoked' => 'Révoqué',
     'total' => 'Total',
+        'file_number' => 'Numéro de dossier',
+    'file_date' => 'Date du dossier',
+    'file_number_example' => 'Ex: 1233',
+    'file_date_example' => 'Ex: 2006/434',
 ];
