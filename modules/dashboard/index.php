@@ -8,7 +8,7 @@ $db = Database::getInstance();
 
 $stats = [
     'citizens' => $db->query("SELECT COUNT(*) as c FROM citizens")->fetch()['c'],
-    'registers' => $db->query("SELECT COUNT(*) as c FROM registers")->fetch()['c'],
+    'register_books' => $db->query("SELECT COUNT(*) as c FROM register_books")->fetch()['c'],
     'certificates' => $db->query("SELECT COUNT(*) as c FROM certificates")->fetch()['c'],
     'documents' => $db->query("SELECT COUNT(*) as c FROM documents")->fetch()['c'],
     'recent_registers' => $db->query("SELECT r.*, c.first_name, c.last_name FROM registers r LEFT JOIN citizens c ON r.citizen_id = c.id ORDER BY r.created_at DESC LIMIT 5")->fetchAll()
