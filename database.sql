@@ -327,3 +327,19 @@ CREATE TABLE IF NOT EXISTS import_history (
     completed_at TIMESTAMP NULL,
     FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `import_history` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `filename` VARCHAR(255) NOT NULL,
+  `module` VARCHAR(50) NOT NULL,
+  `file_type` VARCHAR(10) NOT NULL,
+  `file_path` VARCHAR(500),
+  `total_records` INT DEFAULT 0,
+  `records_processed` INT DEFAULT 0,
+  `records_failed` INT DEFAULT 0,
+  `status` ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+  `error_log` TEXT,
+  `uploaded_by` INT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `completed_at` TIMESTAMP NULL,
+  KEY `uploaded_by` (`uploaded_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
