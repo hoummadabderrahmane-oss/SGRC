@@ -110,6 +110,8 @@ CREATE TABLE `citizens` (
   `file_number` VARCHAR(50)  DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `first_name_ar` VARCHAR(100) NULL AFTER `family_name`,
+  `last_name_ar` VARCHAR(100) NULL AFTER `first_name_ar`,
   PRIMARY KEY (`id`),
   UNIQUE KEY `national_id` (`national_id`),
   KEY `family_name` (`family_name`),
