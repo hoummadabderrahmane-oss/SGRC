@@ -101,13 +101,13 @@ CREATE TABLE `citizens` (
   `gender` enum('male','female') DEFAULT NULL COMMENT 'الجنس',
   `address` varchar(255) DEFAULT NULL COMMENT 'العنوان',
   `neighborhood` varchar(100) DEFAULT NULL COMMENT 'الحي',
-  `phone` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
   `photo_path` varchar(255) DEFAULT NULL,
   `qr_code` varchar(255) DEFAULT NULL,
   `notes` text DEFAULT NULL COMMENT 'ملاحظات',
   `created_by` int(11) UNSIGNED DEFAULT NULL,
   `updated_by` int(11) UNSIGNED DEFAULT NULL,
+  `file_date` VARCHAR(50)  DEFAULT NULL,
+  `file_number` VARCHAR(50)  DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
@@ -296,40 +296,6 @@ CREATE TABLE `notifications` (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- =====================================================
--- Sample Data for Testing
--- =====================================================
-
-INSERT INTO `citizens` (`national_id`, `family_name`, `first_name`, `father_name`, `mother_name`, `birth_date`, `birth_place`, `gender`, `address`, `neighborhood`, `phone`, `notes`) VALUES
-('Y196928', 'دريس', 'محمد', 'أحمد', 'فاطمة', '1980-09-13', 'المدينة', 'male', 'حي الزاوية ق.م', 'الزاوية', '0550123456', ''),
-('Y507803', 'رشيد', 'عبدالله', 'محمد', 'عائشة', '1980-11-12', 'المدينة', 'male', 'حي النخلة ق.م', 'النخلة', '0550789012', ''),
-('Y170602', 'امير', 'بلال', 'عبدالرحمن', 'خديجة', '1979-11-21', 'المدينة', 'male', 'حي النخلة ق.م', 'النخلة', '0550345678', ''),
-('Y354205', 'ناجي', 'مي', 'الزاوية', 'زهرة', '1989-08-16', 'المدينة', 'female', 'حي الزاوية ق.م', 'الزاوية', '0550901234', ''),
-('Y2599', 'امير', 'محمد', 'عبدالله', 'فاطمة', '1956-08-08', 'المدينة', 'male', 'حي النخلة ق.م', 'النخلة', '0550567890', ''),
-('Y337563', 'امير', 'محمد', 'عبدالله', 'فاطمة', '1984-05-08', 'المدينة', 'male', 'حي النخلة ق.م', 'النخلة', '0550234567', ''),
-('Y439761', 'صالح', 'دوار', 'القصور', 'عائشة', '1989-06-28', 'المدينة', 'male', 'حي القصور ق.م', 'القصور', '0550678901', ''),
-('Y385373', 'صالح', 'سعادة', 'أحمد', 'خديجة', '1993-07-21', 'المدينة', 'female', 'حي الزاوية ق.م', 'الزاوية', '0550456789', '');
-
-INSERT INTO `register_books` (`register_number`, `register_type`, `register_type_label`, `register_type_label_fr`, `year`, `page_count`, `status`, `location`) VALUES
-('1980/530', 'birth', 'سجل الولادات', 'Registre des Naissances', 1980, 50, 'active', 'الأرشيف الرئيسي'),
-('1980/654', 'birth', 'سجل الولادات', 'Registre des Naissances', 1980, 45, 'active', 'الأرشيف الرئيسي'),
-('1979/620', 'birth', 'سجل الولادات', 'Registre des Naissances', 1979, 60, 'archived', 'المخزن الثانوي'),
-('1989/06', 'birth', 'سجل الولادات', 'Registre des Naissances', 1989, 55, 'active', 'الأرشيف الرئيسي'),
-('1963/184', 'family', 'سجل العائلة', 'Registre Familial', 1963, 100, 'archived', 'المخزن الثانوي'),
-('1984/377', 'birth', 'سجل الولادات', 'Registre des Naissances', 1984, 48, 'active', 'الأرشيف الرئيسي'),
-('1989/485', 'birth', 'سجل الولادات', 'Registre des Naissances', 1989, 52, 'active', 'الأرشيف الرئيسي'),
-('1993/125', 'birth', 'سجل الولادات', 'Registre des Naissances', 1993, 50, 'active', 'الأرشيف الرئيسي');
-
-INSERT INTO `register_pages` (`register_book_id`, `page_number`, `sequential_number`, `record_date`, `full_name`, `birth_date`, `birth_place`, `father_name`, `mother_name`, `family_name`, `address`, `id_number`, `notes`) VALUES
-(1, 1, 1150, '2016-01-04', 'محمد بن أحمد دريس', '1980-09-13', 'المدينة', 'أحمد', 'فاطمة', 'دريس', 'حي الزاوية ق.م', 'Y196928', 'سجل الولادة رقم 1980/530'),
-(2, 1, 1151, '2016-01-04', 'عبدالله بن محمد رشيد', '1980-11-12', 'المدينة', 'محمد', 'عائشة', 'رشيد', 'حي النخلة ق.م', 'Y507803', 'سجل الولادة رقم 1980/654'),
-(3, 1, 1152, '2016-01-04', 'بلال بن عبدالرحمن امير', '1979-11-21', 'المدينة', 'عبدالرحمن', 'خديجة', 'امير', 'حي النخلة ق.م', 'Y170602', 'سجل الولادة رقم 1979/620'),
-(4, 1, 1153, '2016-01-04', 'مي بنت الزاوية ناجي', '1989-08-16', 'المدينة', 'الزاوية', 'زهرة', 'ناجي', 'حي الزاوية ق.م', 'Y354205', 'سجل الولادة رقم 1989/06'),
-(5, 1, 1154, '2016-01-04', 'محمد بن عبدالله امير', '1956-08-08', 'المدينة', 'عبدالله', 'فاطمة', 'امير', 'حي النخلة ق.م', 'Y2599', 'سجل العائلة رقم 1963/184');  
--- Add new columns
-ALTER TABLE citizens 
-ADD COLUMN file_number VARCHAR(50) NULL AFTER marital_status,
-ADD COLUMN file_date VARCHAR(50) NULL AFTER file_number;
 
 CREATE TABLE IF NOT EXISTS `registers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -344,4 +310,20 @@ CREATE TABLE IF NOT EXISTS `registers` (
   PRIMARY KEY (`id`),
   KEY `citizen_id` (`citizen_id`),
   KEY `created_by` (`created_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS import_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    module VARCHAR(50) NOT NULL,
+    file_type VARCHAR(10) NOT NULL,
+    file_path VARCHAR(500),
+    total_records INT DEFAULT 0,
+    records_processed INT DEFAULT 0,
+    records_failed INT DEFAULT 0,
+    status ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+    error_log TEXT,
+    uploaded_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL,
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
