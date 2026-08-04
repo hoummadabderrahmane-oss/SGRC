@@ -93,6 +93,8 @@ CREATE TABLE `citizens` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `national_id` varchar(20) DEFAULT NULL COMMENT 'رقم الهوية الوطنية',
   `family_name` varchar(100) NOT NULL COMMENT 'الاسم العائلي',
+  `first_name_ar` VARCHAR(100) NULL,
+  `last_name_ar` VARCHAR(100) NULL,
   `first_name` varchar(100) NOT NULL COMMENT 'الاسم الشخصي',
   `father_name` varchar(100) DEFAULT NULL COMMENT 'اسم الأب',
   `mother_name` varchar(100) DEFAULT NULL COMMENT 'اسم الأم',
@@ -106,21 +108,17 @@ CREATE TABLE `citizens` (
   `notes` text DEFAULT NULL COMMENT 'ملاحظات',
   `created_by` int(11) UNSIGNED DEFAULT NULL,
   `updated_by` int(11) UNSIGNED DEFAULT NULL,
-  `file_date` VARCHAR(50)  DEFAULT NULL,
-  `file_number` VARCHAR(50)  DEFAULT NULL,
+  `file_date` VARCHAR(50) DEFAULT NULL,
+  `file_number` VARCHAR(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `first_name_ar` VARCHAR(100) NULL AFTER `family_name`,
-  `last_name_ar` VARCHAR(100) NULL AFTER `first_name_ar`,
   PRIMARY KEY (`id`),
   UNIQUE KEY `national_id` (`national_id`),
   KEY `family_name` (`family_name`),
   KEY `first_name` (`first_name`),
   KEY `birth_date` (`birth_date`),
   KEY `neighborhood` (`neighborhood`),
-  KEY `created_by` (`created_by`),
-  CONSTRAINT `fk_citizens_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `fk_citizens_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  KEY `created_by` (`created_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------
@@ -243,21 +241,21 @@ CREATE TABLE `certificates` (
 -- -----------------------------------------------------
 -- Table: imports
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `imports`;
-CREATE TABLE `imports` (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `file_name` varchar(255) NOT NULL,
-  `file_type` enum('csv','excel','sql','zip') NOT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `records_total` int(11) DEFAULT 0,
-  `records_success` int(11) DEFAULT 0,
-  `records_failed` int(11) DEFAULT 0,
-  `errors` text DEFAULT NULL,
-  `imported_by` int(11) UNSIGNED DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `imported_by` (`imported_by`),
-  CONSTRAINT `fk_imports_user` FOREIGN KEY (`imported_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS `import_history` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `filename` VARCHAR(255) NOT NULL,
+    `module` VARCHAR(50) NOT NULL,
+    `file_type` VARCHAR(10) NOT NULL,
+    `file_path` VARCHAR(500),
+    `total_records` INT DEFAULT 0,
+    `records_processed` INT DEFAULT 0,
+    `records_failed` INT DEFAULT 0,
+    `status` ENUM('pending', 'processing', 'completed', 'failed') DEFAULT 'pending',
+    `error_log` TEXT,
+    `uploaded_by` INT UNSIGNED,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `completed_at` TIMESTAMP NULL,
+    KEY `uploaded_by` (`uploaded_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------
