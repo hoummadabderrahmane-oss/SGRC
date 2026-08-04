@@ -14,8 +14,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 $where = "";
 $params = array();
 if ($search) {
-    $where = " WHERE (first_name LIKE ? OR family_name LIKE ? OR national_id LIKE ?)";
-    $params = array("%$search%", "%$search%", "%$search%");
+    $where = " WHERE (first_name LIKE ? OR family_name LIKE ? OR national_id LIKE ? OR file_number LIKE ?)";
+    $params = array("%$search%", "%$search%", "%$search%", "%$search%");
 }
 
 $sql = "SELECT * FROM citizens" . $where . " ORDER BY created_at DESC LIMIT " . (int)$perPage . " OFFSET " . (int)$offset;
@@ -59,6 +59,8 @@ $totalPages = ceil($total / $perPage);
                             <th><?php echo isset($lang['full_name']) ? $lang['full_name'] : 'Name'; ?></th>
                             <th><?php echo isset($lang['birth_date']) ? $lang['birth_date'] : 'Birth Date'; ?></th>
                             <th><?php echo isset($lang['gender']) ? $lang['gender'] : 'Gender'; ?></th>
+                            <th><?php echo isset($lang['file_number']) ? $lang['file_number'] : 'File Number'; ?></th>
+                            <th><?php echo isset($lang['file_date']) ? $lang['file_date'] : 'File Date'; ?></th>
                             <th><?php echo isset($lang['address']) ? $lang['address'] : 'Address'; ?></th>
                             <th class="text-end"><?php echo isset($lang['actions']) ? $lang['actions'] : 'Actions'; ?></th>
                         </tr>
@@ -87,6 +89,16 @@ $totalPages = ceil($total / $perPage);
                                     <?php echo isset($lang[$citizen['gender']]) ? $lang[$citizen['gender']] : $citizen['gender']; ?>
                                 </span>
                             </td>
+                            <td>
+                                <span class="badge bg-info text-white">
+                                    <?php echo !empty($citizen['file_number']) ? htmlspecialchars($citizen['file_number']) : '-'; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    <?php echo !empty($citizen['file_date']) ? htmlspecialchars($citizen['file_date']) : '-'; ?>
+                                </span>
+                            </td>
                             <td><?php echo htmlspecialchars($citizen['address'] ?? '-'); ?></td>
                             <td class="text-end">
                                 <div class="btn-group">
@@ -110,7 +122,7 @@ $totalPages = ceil($total / $perPage);
                         <?php endforeach; ?>
                         <?php if (empty($citizens)): ?>
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">
+                            <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="fas fa-inbox fa-3x mb-3 d-block opacity-50"></i>
                                 <?php echo isset($lang['no_records']) ? $lang['no_records'] : 'No records found'; ?>
                             </td>

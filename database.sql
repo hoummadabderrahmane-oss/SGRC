@@ -331,7 +331,17 @@ ALTER TABLE citizens
 ADD COLUMN file_number VARCHAR(50) NULL AFTER marital_status,
 ADD COLUMN file_date VARCHAR(50) NULL AFTER file_number;
 
--- Remove old columns (optional - only if you don't need them)
-ALTER TABLE citizens 
-DROP COLUMN phone,
-DROP COLUMN email;
+CREATE TABLE IF NOT EXISTS `registers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `citizen_id` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'pending',
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `citizen_id` (`citizen_id`),
+  KEY `created_by` (`created_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
